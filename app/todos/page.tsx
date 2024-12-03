@@ -1,11 +1,11 @@
 import React from 'react'
 
-const IssuesPage = () => {
+const TodosPage = () => {
       return (
             <div>
-                  IssuesPAge
+                  TodosPAge
             </div>
       )
 }
 
-export default IssuesPage
+export default TodosPage
