@@ -1,9 +1,10 @@
 import React from 'react'
+import { Button } from '@radix-ui/themes';
 
 const TodosPage = () => {
       return (
             <div>
-                  TodosPAge
+                  <Button> New Todos </Button>
             </div>
       )
 }
