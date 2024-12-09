@@ -2,7 +2,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import React from 'react'
-import { AiFillBug } from 'react-icons/ai'
+import { IoListCircle } from 'react-icons/io5'
 import classnames from 'classnames';
 const NavBar = () => {
       const currentPath = usePathname();
@@ -12,7 +12,7 @@ const NavBar = () => {
       ]
       return (
             <nav className='flex space-x-6 border-b mb-5 px-5 h-14 items-center'>
-                  < Link href="/" > <AiFillBug /></Link >
+                  < Link href="/" > <IoListCircle size='35' color='rosybrown' /></Link >
                   <ul className='flex space-x-6'>
                         {links.map(link =>
                               <Link key={link.href}

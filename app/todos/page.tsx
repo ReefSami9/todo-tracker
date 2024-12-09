@@ -8,7 +8,7 @@ const TodosPage = async () => {
       const todos = await prisma.todo.findMany();
       return (
             <div>
-                  <Heading className='mb-5' align='center' as="h2" color='bronze' >List Of Todos</Heading>
+                  <Heading className='mb-5' align='center' as="h3" color='bronze' >List Of Todos</Heading>
                   <Table.Root variant='surface'>
                         <Table.Header>
                               <Table.Row>

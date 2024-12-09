@@ -36,7 +36,7 @@ const NewTodoPage = () => {
       });
       return (
             <div className='max-w-xl mx-auto'>
-                  <Heading className='mb-5' align='center' as="h2" color='bronze' >Add A New Todo</Heading>
+                  <Heading className='mb-5' align='center' as="h3" color='bronze' >Add A New Todo</Heading>
                   {error && <Callout.Root color='red' className='mb-5'>
                         <Callout.Icon>
                               <InfoCircledIcon />
