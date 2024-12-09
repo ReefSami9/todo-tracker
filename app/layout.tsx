@@ -25,7 +25,7 @@ export default function RootLayout({
       <body className={inter.variable}>
         <Theme accentColor="bronze" grayColor="mauve" radius="large">
           <NavBar />
-          <main className="p-5">{children}</main>
+          <main className="p-5 flex justify-center">{children}</main>
         </Theme>
       </body>
     </html>

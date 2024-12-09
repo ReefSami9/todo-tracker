@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Callout, TextField } from '@radix-ui/themes'
+import { Button, Callout, Heading, TextField } from '@radix-ui/themes'
 import SimpleMDE from "react-simplemde-editor";
 import { useForm, Controller } from 'react-hook-form';
 import axios from 'axios'
@@ -35,14 +35,15 @@ const NewTodoPage = () => {
             }
       });
       return (
-            <div className='max-w-xl'>
+            <div className='max-w-xl mx-auto'>
+                  <Heading className='mb-5' align='center' as="h2" color='bronze' >Add A New Todo</Heading>
                   {error && <Callout.Root color='red' className='mb-5'>
                         <Callout.Icon>
                               <InfoCircledIcon />
                         </Callout.Icon>
                         <Callout.Text>{error}</Callout.Text>
                   </Callout.Root>}
-                  <form className='space-y-3' onSubmit={onSubmit}>
+                  <form className='space-y-3 p-5 shadow-lg' onSubmit={onSubmit}>
                         <TextField.Root placeholder='Title' {...register('title')} />
                         <ErrorMessage>
                               {errors.title?.message}
@@ -56,7 +57,9 @@ const NewTodoPage = () => {
                         <ErrorMessage>
                               {errors.description?.message}
                         </ErrorMessage>
-                        <Button disabled={isSubmitting}>Submit {isSubmitting && <Spinner />}</Button>
+                        <div className="flex justify-center min-w-8">
+                              <Button disabled={isSubmitting}>Submit {isSubmitting && <Spinner />}</Button>
+                        </div>
                   </form>
             </div >
       )

@@ -1,14 +1,11 @@
 import React from 'react'
-import { Checkbox, Heading, Table } from '@radix-ui/themes';
-import prisma from '@/prisma/client';
+import { Skeleton, Table } from '@radix-ui/themes';
 import TodosActions from './TodosActions';
-import Link from 'next/link';
 
-const TodosPage = async () => {
-      const todos = await prisma.todo.findMany();
+const loadingTodoPage = () => {
+      const todos = [1, 2, 3, 4, 5]
       return (
             <div>
-                  <Heading className='mb-5' align='center' as="h2" color='bronze' >List Of Todos</Heading>
                   <Table.Root variant='surface'>
                         <Table.Header>
                               <Table.Row>
@@ -19,15 +16,15 @@ const TodosPage = async () => {
                         </Table.Header>
                         <Table.Body>
                               {todos.map((todo) => (
-                                    <Table.Row key={todo.id}>
+                                    <Table.Row key={todo}>
                                           <Table.Cell>
-                                                <Link href={`/todos/${todo.id}`}>
-                                                      {todo.title}
-                                                </Link>
+                                                <Skeleton />
                                           </Table.Cell>
-                                          <Table.Cell>{todo.description}</Table.Cell>
                                           <Table.Cell>
-                                                <Checkbox checked={todo.completed} color="bronze" defaultChecked />
+                                                <Skeleton />
+                                          </Table.Cell>
+                                          <Table.Cell>
+                                                <Skeleton />
                                           </Table.Cell>
                                     </Table.Row>
                               ))}
@@ -38,4 +35,4 @@ const TodosPage = async () => {
       )
 }
 
-export default TodosPage
+export default loadingTodoPage
