@@ -1,9 +1,8 @@
 'use client';
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import React from 'react'
-import { IoListCircle } from 'react-icons/io5'
 import classnames from 'classnames';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { IoListCircle } from 'react-icons/io5';
 const NavBar = () => {
       const currentPath = usePathname();
       const links = [

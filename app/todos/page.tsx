@@ -1,8 +1,7 @@
-import React from 'react'
-import { Checkbox, Heading, Table } from '@radix-ui/themes';
-import prisma from '@/prisma/client';
-import TodosActions from './TodosActions';
 import Link from '@/app/components/Link';
+import prisma from '@/prisma/client';
+import { Checkbox, Heading, Table } from '@radix-ui/themes';
+import TodosActions from './TodosActions';
 
 const TodosPage = async () => {
       const todos = await prisma.todo.findMany();

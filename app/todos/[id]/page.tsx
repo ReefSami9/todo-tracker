@@ -1,8 +1,9 @@
 import prisma from '@/prisma/client'
-import { Badge, Box, Card, Flex, Heading, Text } from '@radix-ui/themes'
+import { Card, Flex, Heading } from '@radix-ui/themes'
 import { notFound } from 'next/navigation'
-import React from 'react'
-import ReactMarkdown from 'react-markdown'
+import DeleteTodoButton from './delete/DeleteTodoButton'
+import EditTodoButton from './edit/EditTodoButton'
+import TodoDetails from './TodoDetails'
 
 interface Props {
       params: {
@@ -20,24 +21,13 @@ const TodoDetailPage = async ({ params }: Props) => {
 
       return (
             <div> <Heading className='mb-5' align='center' as="h3" color='bronze' >Todo Details</Heading>
-                  <Card className="max-w-2xl mx-auto p-5 shadow-lg border border-gray-300"
+                  <Card size="3" className="max-w-2xl mx-auto p-5 shadow-lg border border-gray-300"
                         style={{ minWidth: '500px', maxWidth: '700px' }}>
-                        <Flex align="center" justify="between" className="mb-4">
-                              <Heading as="h2" size="4" color="bronze">
-                                    {todo.title}
-                              </Heading>
-                              <Badge color={todo.completed ? "green" : "red"}>
-                                    {todo.completed ? "Completed" : "Not Completed"}
-                              </Badge>
+                        <TodoDetails todo={todo} />
+                        <Flex align="center" justify="end" gap="3">
+                              <EditTodoButton todoId={todo.id} />
+                              <DeleteTodoButton todoId={todo.id} />
                         </Flex>
-                        <Box
-                              className=" prose p-4 border border-gray-300 rounded-md mb-4"
-                              style={{ backgroundColor: '#f9f9f9' }}
-                        >
-                              <ReactMarkdown>
-                                    {todo.description}
-                              </ReactMarkdown>
-                        </Box>
                   </Card>
             </div>
       )
