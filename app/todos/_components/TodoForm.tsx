@@ -2,7 +2,7 @@
 
 import ErrorMessage from '@/app/components/ErrorMessage';
 import Spinner from '@/app/components/Spinner';
-import { createTodoSchema } from '@/app/validationsSchema';
+import { todoSchema } from '@/app/validationsSchema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Todo } from '@prisma/client';
 import { InfoCircledIcon } from '@radix-ui/react-icons';
@@ -17,12 +17,12 @@ import { z } from 'zod';
 
 const SimpleMDE = dynamic(() => import('react-simplemde-editor'), { ssr: false })
 
-type TodoFormData = z.infer<typeof createTodoSchema>;
+type TodoFormData = z.infer<typeof todoSchema>;
 
 const TodoForm = ({ todo }: { todo?: Todo }) => {
       const router = useRouter();
       const { register, control, handleSubmit, formState: { errors } } = useForm<TodoFormData>({
-            resolver: zodResolver(createTodoSchema)
+            resolver: zodResolver(todoSchema)
       });
       const [error, setError] = useState('');
       const [isSubmitting, setSubmitting] = useState(false);
