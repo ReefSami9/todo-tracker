@@ -2,6 +2,7 @@ import prisma from '@/prisma/client'
 import { Badge, Box, Card, Flex, Heading, Text } from '@radix-ui/themes'
 import { notFound } from 'next/navigation'
 import React from 'react'
+import ReactMarkdown from 'react-markdown'
 
 interface Props {
       params: {
@@ -30,12 +31,12 @@ const TodoDetailPage = async ({ params }: Props) => {
                               </Badge>
                         </Flex>
                         <Box
-                              className="p-4 border border-gray-300 rounded-md mb-4"
+                              className=" prose p-4 border border-gray-300 rounded-md mb-4"
                               style={{ backgroundColor: '#f9f9f9' }}
                         >
-                              <Text size="3" as="p">
+                              <ReactMarkdown>
                                     {todo.description}
-                              </Text>
+                              </ReactMarkdown>
                         </Box>
                   </Card>
             </div>
