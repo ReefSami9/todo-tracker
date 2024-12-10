@@ -1,33 +1,27 @@
-import { todoSchema } from "@/app/validationsSchema";
-import prisma from "@/prisma/client";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from 'next/server';
+import prisma from '@/prisma/client';
 
-export async function PATCH(
-      request: NextRequest,
-      { params }: { params: { id: string } }) {
-      const body = await request.json();
-      const validation = todoSchema.safeParse(body);
-      if (!validation.success)
-            return Response.json(validation.error.format(), { status: 400 });
+export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
+      try {
+            const body = await request.json();
+            console.log('Request body:', body); // Log the incoming body
+            console.log('Params ID:', params.id); // Log the params
 
-      const todo = await prisma.todo.findUnique({
-            where: {
-                  id: parseInt(params.id)
+            if (typeof body.completed !== 'boolean') {
+                  console.error('Invalid "completed" value:', body.completed);
+                  return NextResponse.json({ error: 'Invalid input' }, { status: 400 });
             }
-      }).then((todo) => {
-            if (!todo)
-                  return Response.json({ error: "Todo not found" }, { status: 404 });
-      })
-      const updatedTodo = await prisma.todo.update({
-            where: {
-                  id: parseInt(params.id)
-            },
-            data: {
-                  title: body.title,
-                  description: body.description,
-                  completed: body.completed
-            }
-      });
-      return NextResponse.json(updatedTodo);
 
+            // Perform the update
+            const updatedTodo = await prisma.todo.update({
+                  where: { id: parseInt(params.id) },
+                  data: { completed: body.completed }, // Use the provided completed value
+            });
+
+            console.log('Updated Todo:', updatedTodo); // Log the result
+            return NextResponse.json(updatedTodo); // Return the updated record
+      } catch (error) {
+            console.error('Failed to update todo:', error);
+            return NextResponse.json({ error: 'Failed to update todo' }, { status: 500 });
+      }
 }

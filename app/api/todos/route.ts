@@ -13,3 +13,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(newTodo, { status: 201 })
 
 }
+
+export async function GET() {
+      try {
+            const todos = await prisma.todo.findMany();
+            return NextResponse.json(todos); // Return todos as valid JSON
+      } catch (error) {
+            console.error('Failed to fetch todos:', error);
+            return NextResponse.json({ error: 'Failed to fetch todos' }, { status: 500 });
+      }
+}
