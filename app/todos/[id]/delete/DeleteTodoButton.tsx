@@ -1,8 +1,12 @@
+'use client';
+import { deleteTodos } from '@/app/lib/deleteTodos'
 import { TrashIcon } from '@radix-ui/react-icons'
 import { AlertDialog, Button, Flex } from '@radix-ui/themes'
+import { useRouter } from 'next/navigation';
 import React from 'react'
 
 const DeleteTodoButton = ({ todoId }: { todoId: number }) => {
+      const router = useRouter();
       return (
             <div>
                   <AlertDialog.Root>
@@ -19,7 +23,14 @@ const DeleteTodoButton = ({ todoId }: { todoId: number }) => {
                                           <Button variant="soft" size='1'>Cancel</Button>
                                     </AlertDialog.Cancel>
                                     <AlertDialog.Action>
-                                          <Button color="red" variant="soft" size='1'>Delete Todo</Button>
+                                          <Button color="red" variant="soft" size='1'
+                                                onClick={() => {
+                                                      deleteTodos(todoId);
+                                                      router.push('/todos');
+                                                      router.refresh;
+                                                }}>
+                                                Delete Todo
+                                          </Button>
                                     </AlertDialog.Action>
                               </Flex>
                         </AlertDialog.Content>

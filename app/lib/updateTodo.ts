@@ -1,6 +1,6 @@
 export const markTodoAsComplete = async (id: number, completed: boolean): Promise<boolean> => {
       try {
-            console.log(`Sending completed=${completed} for ID=${id}`); // Debug the value
+            console.log(`Sending completed=${completed} for ID=${id}`);
             const response = await fetch(`/api/todos/${id}`, {
                   method: 'PATCH',
                   headers: { 'Content-Type': 'application/json' },
@@ -8,7 +8,7 @@ export const markTodoAsComplete = async (id: number, completed: boolean): Promis
             });
 
             const result = await response.json();
-            console.log('Response data:', result); // Log the response
+            console.log('Response data:', result);
 
             return response.ok;
       } catch (error) {
