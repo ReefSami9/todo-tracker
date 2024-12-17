@@ -17,20 +17,17 @@ const TodosList = ({ todos }: { todos: Todo[] }) => {
       );
 
       const handleCheckboxChange = async (id: number, completed: boolean) => {
-            // Optimistically update the single todo in Map
             setLocalTodos((prevTodos) => {
                   const updatedTodos = new Map(prevTodos);
                   updatedTodos.set(id, { ...updatedTodos.get(id)!, completed });
                   return updatedTodos;
             });
 
-            // Persist change to the server
             try {
                   await markTodoAsComplete(id, completed);
             } catch (error) {
                   console.error('Failed to update todo', error);
 
-                  // Revert the change if the server call fails
                   setLocalTodos((prevTodos) => {
                         const updatedTodos = new Map(prevTodos);
                         updatedTodos.set(id, { ...updatedTodos.get(id)!, completed: !completed });

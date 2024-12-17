@@ -3,15 +3,16 @@ import { deleteTodos } from '@/app/lib/deleteTodos'
 import { TrashIcon } from '@radix-ui/react-icons'
 import { AlertDialog, Button, Flex } from '@radix-ui/themes'
 import { useRouter } from 'next/navigation';
-import React from 'react'
+import React, { useState } from 'react'
 
 const DeleteTodoButton = ({ todoId }: { todoId: number }) => {
       const router = useRouter();
+      const [isDeleting, setDeleting] = useState(false);
       return (
             <div>
                   <AlertDialog.Root>
                         <AlertDialog.Trigger>
-                              <Button color="red" variant="soft" size='1'><TrashIcon />Delete</Button>
+                              <Button disabled={isDeleting} color="red" variant="soft" size='1'><TrashIcon />Delete</Button>
                         </AlertDialog.Trigger>
                         <AlertDialog.Content>
                               <AlertDialog.Title>Confirm Deletion</AlertDialog.Title>
@@ -23,8 +24,9 @@ const DeleteTodoButton = ({ todoId }: { todoId: number }) => {
                                           <Button variant="soft" size='1'>Cancel</Button>
                                     </AlertDialog.Cancel>
                                     <AlertDialog.Action>
-                                          <Button color="red" variant="soft" size='1'
+                                          <Button disabled={isDeleting} color="red" variant="soft" size='1'
                                                 onClick={() => {
+                                                      setDeleting(true)
                                                       deleteTodos(todoId);
                                                       router.push('/todos');
                                                       router.refresh;

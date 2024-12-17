@@ -2,9 +2,11 @@ import { Heading } from '@radix-ui/themes';
 import TodosActions from './TodosActions';
 import { getTodos } from '@/app/lib/getTodos';
 import TodosList from './_components/TodosList';
+import delay from 'delay';
 
 const TodosPage = async () => {
       const todos = await getTodos();
+      await delay(100);
       return (
             <div>
                   <Heading className='mb-5' align='center' as="h3" color='bronze' >List Of Todos</Heading>
