@@ -3,7 +3,7 @@
 import Link from '@/app/components/Link';
 import { markTodoAsComplete } from '@/app/lib/updateTodo';
 import { Checkbox, Table } from '@radix-ui/themes';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 interface Todo {
       id: number;
@@ -11,34 +11,33 @@ interface Todo {
       completed: boolean;
 }
 
-const TodosList = () => {
-      const [todos, setTodos] = useState<Todo[]>([]);
+const TodosList = ({ todos }: { todos: Todo[] }) => {
+      const [localTodos, setLocalTodos] = useState<Map<number, Todo>>(
+            new Map(todos.map((todo) => [todo.id, todo]))
+      );
 
-      useEffect(() => {
-            const fetchTodos = async () => {
-                  const response = await fetch('/api/todos');
-                  const data = await response.json();
-                  setTodos(data);
-            };
-            fetchTodos();
-      }, []);
+      const handleCheckboxChange = async (id: number, completed: boolean) => {
+            // Optimistically update the single todo in Map
+            setLocalTodos((prevTodos) => {
+                  const updatedTodos = new Map(prevTodos);
+                  updatedTodos.set(id, { ...updatedTodos.get(id)!, completed });
+                  return updatedTodos;
+            });
 
-      const handleCheckboxChange = async (id: number, currentValue: boolean) => {
-            const newValue = !currentValue; // Toggle the current value
-            console.log(`Toggling ID=${id} to completed=${newValue}`); // Debug the toggle
+            // Persist change to the server
+            try {
+                  await markTodoAsComplete(id, completed);
+            } catch (error) {
+                  console.error('Failed to update todo', error);
 
-            const success = await markTodoAsComplete(id, newValue); // Call utility function
-            if (success) {
-                  setTodos((prevTodos) =>
-                        prevTodos.map((todo) =>
-                              todo.id === id ? { ...todo, completed: newValue } : todo
-                        )
-                  );
-            } else {
-                  console.error('Failed to update checkbox value');
+                  // Revert the change if the server call fails
+                  setLocalTodos((prevTodos) => {
+                        const updatedTodos = new Map(prevTodos);
+                        updatedTodos.set(id, { ...updatedTodos.get(id)!, completed: !completed });
+                        return updatedTodos;
+                  });
             }
       };
-
 
       return (
             <div className="flex justify-center w-full">
@@ -46,13 +45,11 @@ const TodosList = () => {
                         <Table.Header>
                               <Table.Row>
                                     <Table.ColumnHeaderCell>Title</Table.ColumnHeaderCell>
-                                    <Table.ColumnHeaderCell align="center">
-                                          Completed
-                                    </Table.ColumnHeaderCell>
+                                    <Table.ColumnHeaderCell align="center">Completed</Table.ColumnHeaderCell>
                               </Table.Row>
                         </Table.Header>
                         <Table.Body>
-                              {todos.map((todo) => (
+                              {Array.from(localTodos.values()).map((todo) => (
                                     <Table.Row key={todo.id}>
                                           <Table.Cell>
                                                 <Link href={`/todos/${todo.id}`}>{todo.title}</Link>
@@ -61,7 +58,7 @@ const TodosList = () => {
                                                 <Checkbox
                                                       checked={todo.completed}
                                                       color="bronze"
-                                                      onCheckedChange={() => handleCheckboxChange(todo.id, todo.completed)}
+                                                      onCheckedChange={() => handleCheckboxChange(todo.id, !todo.completed)}
                                                 />
                                           </Table.Cell>
                                     </Table.Row>
