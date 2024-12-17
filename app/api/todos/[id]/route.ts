@@ -25,3 +25,19 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
             return NextResponse.json({ error: 'Failed to update todo' }, { status: 500 });
       }
 }
+
+export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+      const todo = await prisma.todo.findUnique({
+            where: { id: parseInt(params.id) },
+      });
+      if (!todo)
+            return NextResponse.json({ error: 'Todo not found' }, { status: 404 });
+      try {
+            await prisma.todo.delete({
+                  where: { id: todo.id },
+            });
+            return NextResponse.json(todo);
+      } catch (error) {
+            return NextResponse.json({ error: 'Failed to delete todo' }, { status: 500 });
+      }
+}
