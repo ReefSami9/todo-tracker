@@ -37,8 +37,7 @@ const TodoDetails = ({ todo }: { todo: Todo }) => {
                         {!completed && (
                               <Button
                                     variant="solid"
-                                    color="green"
-                                    className="hover:bg-green-600"
+                                    color="jade"
                                     onClick={handleMarkComplete}
                               >
                                     Mark Complete

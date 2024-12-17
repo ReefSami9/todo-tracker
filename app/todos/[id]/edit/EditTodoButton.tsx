@@ -5,7 +5,7 @@ import Link from 'next/link'
 const EditTodoButton = ({ todoId }: { todoId: number }) => {
       return (
             <div>
-                  <Button size='1'>
+                  <Button variant="soft" size='1'>
                         <Pencil2Icon />
                         <Link href={`/todos/${todoId}/edit`}>Edit</Link></Button>
             </div>
