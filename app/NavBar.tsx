@@ -4,11 +4,10 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { IoListCircle } from 'react-icons/io5';
 import { useSession } from 'next-auth/react';
-import { Box, Container, Flex } from '@radix-ui/themes';
+import { Avatar, Box, Button, Container, DropdownMenu, Flex } from '@radix-ui/themes';
 
 const NavBar = () => {
       const currentPath = usePathname();
-      const { status, data: session } = useSession();
 
       const links = [
             { label: 'Dashboard', href: '/' },
@@ -19,7 +18,7 @@ const NavBar = () => {
                   <Container>
                         <Flex justify='between'>
                               <Flex align='center' gap='3'>
-                                    < Link href="/" > <IoListCircle size='25' color='rosybrown' /></Link >
+                                    < Link href="/" > <IoListCircle size='30' color='rosybrown' /></Link >
                                     <ul className='flex space-x-6'>
                                           {links.map(link => (
                                                 <li key={link.href}>
@@ -35,18 +34,34 @@ const NavBar = () => {
                                           ))}
                                     </ul>
                               </Flex>
-                              <Box>
-                                    {status === 'authenticated' && (
-                                          <Link href="/api/auth/signout">Log Out</Link>
-                                    )}
-                                    {status === 'unauthenticated' && (
-                                          <Link href="/api/auth/signin">Login</Link>
-                                    )}
-                              </Box>
+                              {<AuthStatus />}
                         </Flex>
                   </Container>
             </nav >
       )
+}
+const AuthStatus = () => {
+      const { status, data: session } = useSession();
+      if (status === 'loading') return null;
+      if (status === 'unauthenticated')
+            return <Button><Link href="/api/auth/signin">Login</Link></Button>
+      return <Box>
+            <DropdownMenu.Root>
+                  <DropdownMenu.Trigger>
+                        <Avatar
+                              src={session!.user!.image!} fallback='?' size='2' radius='full' className='cursor-pointer hover:border-2' />
+                  </DropdownMenu.Trigger>
+                  <DropdownMenu.Content>
+                        <DropdownMenu.Label>
+                              {session!.user!.email}
+                        </DropdownMenu.Label>
+                        <DropdownMenu.Item>
+                              <Link href="/api/auth/signout">Logout</Link>
+                        </DropdownMenu.Item>
+                  </DropdownMenu.Content>
+            </DropdownMenu.Root>
+
+      </Box>;
 }
 
 export default NavBar
