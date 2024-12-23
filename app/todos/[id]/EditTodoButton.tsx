@@ -7,7 +7,7 @@ const EditTodoButton = ({ todoId }: { todoId: number }) => {
             <div>
                   <Button variant="soft" size='1'>
                         <Pencil2Icon />
-                        <Link href={`/todos/${todoId}/edit`}>Edit</Link></Button>
+                        <Link href={`/todos/edit/${todoId}`}>Edit</Link></Button>
             </div>
       )
 }

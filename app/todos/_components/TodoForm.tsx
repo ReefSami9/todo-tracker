@@ -63,6 +63,14 @@ const TodoForm = ({ todo }: { todo?: Todo }) => {
                         <ErrorMessage>
                               {errors.description?.message}
                         </ErrorMessage>
+                        <div>
+                              <label className="flex items-center space-x-2">
+                                    <input type="checkbox"
+                                          className='accent-[#A18072]' {...register('completed')} defaultChecked={todo?.completed || false} />
+                                    <span>Completed</span>
+                              </label>
+                              <ErrorMessage>{errors.completed?.message}</ErrorMessage>
+                        </div>
                         <div className="flex justify-center min-w-8">
                               <Button disabled={isSubmitting}>Submit {isSubmitting && <Spinner />}</Button>
                         </div>
@@ -71,4 +79,4 @@ const TodoForm = ({ todo }: { todo?: Todo }) => {
       )
 }
 
-export default TodoForm
+export default TodoForm;
