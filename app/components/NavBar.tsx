@@ -2,9 +2,9 @@
 import classnames from 'classnames';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { IoListCircle } from 'react-icons/io5';
 import { useSession } from 'next-auth/react';
 import { Avatar, Box, Button, Container, DropdownMenu, Flex } from '@radix-ui/themes';
+import Logo from '../assets/Logo';
 
 const NavBar = () => {
       const currentPath = usePathname();
@@ -18,7 +18,9 @@ const NavBar = () => {
                   <Container>
                         <Flex justify='between'>
                               <Flex align='center' gap='3'>
-                                    < Link href="/" > <IoListCircle size='30' color='rosybrown' /></Link >
+                                    <Link href="/" >
+                                          <Logo />
+                                    </Link >
                                     <ul className='flex space-x-6'>
                                           {links.map(link => (
                                                 <li key={link.href}>
