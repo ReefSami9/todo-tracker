@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/prisma/client';
-import { getServerSession } from "next-auth";
-import authOptions from "@/app/auth/authOptions";
+import { getServerSession } from 'next-auth';
+import authOptions from '@/app/auth/authOptions';
 
-export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(request: NextRequest, context: { params: { id: string } }) {
+      const { params } = context;
       const session = await getServerSession(authOptions);
 
       if (!session) {
@@ -38,7 +39,6 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
 }
 
 export async function DELETE(request: NextRequest, context: { params: { id: string } }) {
-      const { params } = context; // Extract params from context
       const session = await getServerSession(authOptions);
 
       if (!session) {
@@ -46,8 +46,10 @@ export async function DELETE(request: NextRequest, context: { params: { id: stri
       }
 
       try {
+            const { id } = context.params;
+
             const todo = await prisma.todo.findUnique({
-                  where: { id: parseInt(params.id) },
+                  where: { id: parseInt(id) },
             });
 
             if (!todo) {
