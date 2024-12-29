@@ -6,7 +6,7 @@ import { todoSchema } from '@/app/validationsSchema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Todo } from '@prisma/client';
 import { InfoCircledIcon } from '@radix-ui/react-icons';
-import { Button, Callout, Heading, TextField } from '@radix-ui/themes';
+import { Button, Callout, Flex, Heading, TextField } from '@radix-ui/themes';
 import axios from 'axios';
 import "easymde/dist/easymde.min.css";
 import { useRouter } from 'next/navigation';
@@ -29,32 +29,50 @@ const TodoForm = ({ todo }: { todo?: Todo }) => {
       const onSubmit = handleSubmit(async (data) => {
             try {
                   setSubmitting(true);
+
                   if (todo) {
-                        await axios.patch(`/api/todos/${todo.id}`, data);
+                        await axios.patch(`/api/todos/${todo.id}`, {
+                              title: data.title,
+                              description: data.description,
+                              completed: data.completed,
+                        });
                         queryClient.invalidateQueries({ queryKey: ['todos'] });
                         queryClient.invalidateQueries({ queryKey: ['todos', todo.id] });
                         router.push(`/todos/${todo.id}`);
                         return;
                   }
+
                   await axios.post('/api/todos', data);
                   queryClient.invalidateQueries({ queryKey: ['todos'] });
                   router.push('/todos');
             } catch (error) {
-                  setSubmitting(false);
+                  console.error(error);
                   setError('An unexpected error occurred.');
+            } finally {
+                  setSubmitting(false);
             }
       });
       return (
-            <div className='max-w-xl mx-auto'>
-                  <Heading className='mb-5' align='center' as="h3" color='bronze' >Add A New Todo</Heading>
+            <Flex
+                  direction="column"
+                  align="center"
+                  gap="8"
+                  className="max-w-5xl mx-auto mt-12 px-4 sm:px-6 lg:px-8"
+            >
+                  <Heading className='mb-5 text-center' align='center' as="h3" color='bronze'>Add A New Todo</Heading>
                   {error && <Callout.Root color='red' className='mb-5'>
                         <Callout.Icon>
                               <InfoCircledIcon />
                         </Callout.Icon>
                         <Callout.Text>{error}</Callout.Text>
                   </Callout.Root>}
-                  <form className='space-y-3 p-5 shadow-lg' onSubmit={onSubmit}>
-                        <TextField.Root defaultValue={todo?.title} placeholder='Title' {...register('title')} />
+                  <form className='space-y-4 p-5 shadow-lg bg-white rounded-md' onSubmit={onSubmit}>
+                        <TextField.Root
+                              className="w-full"
+                              defaultValue={todo?.title}
+                              placeholder='Title'
+                              {...register('title')}
+                        />
                         <ErrorMessage>
                               {errors.title?.message}
                         </ErrorMessage>
@@ -63,25 +81,33 @@ const TodoForm = ({ todo }: { todo?: Todo }) => {
                               name="description"
                               defaultValue={todo?.description}
                               control={control}
-                              render={({ field }) => <SimpleMDE placeholder='Description' {...field} />}
+                              render={({ field }) => (
+                                    <div className="w-full">
+                                          <SimpleMDE placeholder='Description' {...field} />
+                                    </div>
+                              )}
                         />
                         <ErrorMessage>
                               {errors.description?.message}
                         </ErrorMessage>
-                        <div>
-                              <label className="flex items-center space-x-2">
-                                    <input type="checkbox"
-                                          className='accent-[#A18072]' {...register('completed')} defaultChecked={todo?.completed || false} />
-                                    <span>Completed</span>
-                              </label>
-                              <ErrorMessage>{errors.completed?.message}</ErrorMessage>
+
+                        <div className="flex items-center space-x-2">
+                              <input
+                                    type="checkbox"
+                                    className='accent-[#A18072] w-4 h-4'
+                                    {...register('completed')}
+                                    defaultChecked={todo?.completed || false}
+                              />
+                              <span className="text-sm">Completed</span>
                         </div>
-                        <div className="flex justify-center min-w-8">
-                              <Button disabled={isSubmitting}>Submit {isSubmitting && <Spinner />}</Button>
+                        <ErrorMessage>{errors.completed?.message}</ErrorMessage>
+
+                        <div className="flex justify-center">
+                              <Button disabled={isSubmitting} className="w-full sm:w-auto">Submit {isSubmitting && <Spinner />}</Button>
                         </div>
                   </form>
-            </div >
-      )
-}
+            </Flex >
+      );
+};
 
 export default TodoForm;

@@ -29,7 +29,7 @@ const DeleteTodoButton = ({ todoId }: { todoId: number }) => {
                                                       setDeleting(true)
                                                       deleteTodos(todoId);
                                                       router.push('/todos');
-                                                      router.refresh;
+                                                      router.refresh();
                                                 }}>
                                                 Delete Todo
                                           </Button>

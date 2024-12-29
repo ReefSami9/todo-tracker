@@ -1,20 +1,21 @@
 'use client';
 
 import Link from '@/app/components/Link';
-import { markTodoAsComplete } from '@/app/lib/updateTodo';
 import { Checkbox, Table } from '@radix-ui/themes';
 import { useState, useEffect } from 'react';
-import { useSession } from 'next-auth/react';
-import { useTodos } from '@/app/hooks/useTodos';
 
 interface Todo {
       id: number;
       title: string;
       completed: boolean;
+      userId: string;
 }
 
-const TodosList = () => {
-      const { data: todos, isLoading, isError } = useTodos();
+interface TodosListProps {
+      todos: Todo[];
+}
+
+const TodosList: React.FC<TodosListProps> = ({ todos }) => {
       const [localTodos, setLocalTodos] = useState<Map<number, Todo>>(new Map());
 
       useEffect(() => {
@@ -31,9 +32,22 @@ const TodosList = () => {
             });
 
             try {
-                  await markTodoAsComplete(id, completed);
+                  const response = await fetch(`/api/todos/${id}`, {
+                        method: 'PATCH',
+                        headers: {
+                              'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ completed }),
+                  });
+
+                  if (!response.ok) {
+                        throw new Error('Failed to update todo');
+                  }
+
+                  const updatedTodo = await response.json();
+                  console.log('Todo updated successfully:', updatedTodo);
             } catch (error) {
-                  console.error('Failed to update todo', error);
+                  console.error('Failed to update todo:', error);
                   setLocalTodos((prevTodos) => {
                         const updatedTodos = new Map(prevTodos);
                         updatedTodos.set(id, { ...updatedTodos.get(id)!, completed: !completed });
@@ -41,14 +55,6 @@ const TodosList = () => {
                   });
             }
       };
-
-      if (isLoading) {
-            return <p>Loading todos...</p>;
-      }
-
-      if (isError) {
-            return <p>Failed to load todos. Please try again later.</p>;
-      }
 
       return (
             <div className="flex justify-center w-full">
