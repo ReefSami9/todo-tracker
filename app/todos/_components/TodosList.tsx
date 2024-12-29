@@ -3,7 +3,9 @@
 import Link from '@/app/components/Link';
 import { markTodoAsComplete } from '@/app/lib/updateTodo';
 import { Checkbox, Table } from '@radix-ui/themes';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
+import { useTodos } from '@/app/hooks/useTodos';
 
 interface Todo {
       id: number;
@@ -11,10 +13,16 @@ interface Todo {
       completed: boolean;
 }
 
-const TodosList = ({ todos }: { todos: Todo[] }) => {
-      const [localTodos, setLocalTodos] = useState<Map<number, Todo>>(
-            new Map(todos.map((todo) => [todo.id, todo]))
-      );
+const TodosList = () => {
+      const { data: session } = useSession();
+      const { data: todos, isLoading, isError } = useTodos();
+      const [localTodos, setLocalTodos] = useState<Map<number, Todo>>(new Map());
+
+      useEffect(() => {
+            if (todos) {
+                  setLocalTodos(new Map(todos.map((todo: Todo) => [todo.id, todo])));
+            }
+      }, [todos]);
 
       const handleCheckboxChange = async (id: number, completed: boolean) => {
             setLocalTodos((prevTodos) => {
@@ -27,7 +35,6 @@ const TodosList = ({ todos }: { todos: Todo[] }) => {
                   await markTodoAsComplete(id, completed);
             } catch (error) {
                   console.error('Failed to update todo', error);
-
                   setLocalTodos((prevTodos) => {
                         const updatedTodos = new Map(prevTodos);
                         updatedTodos.set(id, { ...updatedTodos.get(id)!, completed: !completed });
@@ -35,6 +42,18 @@ const TodosList = ({ todos }: { todos: Todo[] }) => {
                   });
             }
       };
+
+      if (!session) {
+            return <p>Log in to track your todos</p>;
+      }
+
+      if (isLoading) {
+            return <p>Loading todos...</p>;
+      }
+
+      if (isError) {
+            return <p>Failed to load todos. Please try again later.</p>;
+      }
 
       return (
             <div className="flex justify-center w-full">
