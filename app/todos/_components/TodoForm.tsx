@@ -14,11 +14,13 @@ import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import SimpleMDE from "react-simplemde-editor";
+import { useQueryClient } from '@tanstack/react-query';
 
 type TodoFormData = z.infer<typeof todoSchema>;
 
 const TodoForm = ({ todo }: { todo?: Todo }) => {
       const router = useRouter();
+      const queryClient = useQueryClient();
       const { register, control, handleSubmit, formState: { errors } } = useForm<TodoFormData>({
             resolver: zodResolver(todoSchema)
       });
@@ -29,10 +31,13 @@ const TodoForm = ({ todo }: { todo?: Todo }) => {
                   setSubmitting(true);
                   if (todo) {
                         await axios.patch(`/api/todos/${todo.id}`, data);
+                        queryClient.invalidateQueries({ queryKey: ['todos'] });
+                        queryClient.invalidateQueries({ queryKey: ['todos', todo.id] });
                         router.push(`/todos/${todo.id}`);
                         return;
                   }
                   await axios.post('/api/todos', data);
+                  queryClient.invalidateQueries({ queryKey: ['todos'] });
                   router.push('/todos');
             } catch (error) {
                   setSubmitting(false);

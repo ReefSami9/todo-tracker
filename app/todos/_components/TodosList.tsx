@@ -14,7 +14,6 @@ interface Todo {
 }
 
 const TodosList = () => {
-      const { data: session } = useSession();
       const { data: todos, isLoading, isError } = useTodos();
       const [localTodos, setLocalTodos] = useState<Map<number, Todo>>(new Map());
 
@@ -42,10 +41,6 @@ const TodosList = () => {
                   });
             }
       };
-
-      if (!session) {
-            return <p>Log in to track your todos</p>;
-      }
 
       if (isLoading) {
             return <p>Loading todos...</p>;

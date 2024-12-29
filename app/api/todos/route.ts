@@ -7,24 +7,38 @@ import authOptions from "@/app/auth/authOptions";
 export async function POST(request: NextRequest) {
       const session = await getServerSession(authOptions);
 
-      if (!session || !session.user) {
+      if (!session || !session.user || !session.user.email) {
             return new Response("Unauthorized", { status: 401 });
       }
 
-      const body = await request.json();
-      const validation = todoSchema.parse(body);
+      try {
+            const user = await prisma.user.findUnique({
+                  where: { email: session.user.email },
+            });
 
-      const newTodo = await prisma.todo.create({
-            data: {
-                  title: validation.title,
-                  description: validation.description,
-                  completed: validation.completed,
-                  userId: session.user.id,
-            },
-      });
-      return NextResponse.json(newTodo, { status: 201 })
+            if (!user) {
+                  return new Response("User not found", { status: 404 });
+            }
 
+            const body = await request.json();
+            const validation = todoSchema.parse(body);
+
+            const newTodo = await prisma.todo.create({
+                  data: {
+                        title: validation.title,
+                        description: validation.description,
+                        completed: validation.completed,
+                        userId: user.id,
+                  },
+            });
+
+            return NextResponse.json(newTodo, { status: 201 });
+      } catch (error) {
+            console.error('Error creating todo:', error);
+            return new Response("Internal Server Error", { status: 500 });
+      }
 }
+
 
 export async function GET(req: Request) {
       const session = await getServerSession(authOptions);
@@ -35,7 +49,6 @@ export async function GET(req: Request) {
 
       const todos = await prisma.todo.findMany({
             where: { userId: session.user.id },
-            orderBy: { createdAt: "desc" },
       });
 
       return new Response(JSON.stringify(todos), { status: 200 });
