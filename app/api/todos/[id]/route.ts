@@ -37,7 +37,8 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
       }
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, context: { params: { id: string } }) {
+      const { params } = context; // Extract params from context
       const session = await getServerSession(authOptions);
 
       if (!session) {
